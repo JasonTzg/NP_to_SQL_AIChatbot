@@ -1,0 +1,23 @@
+# FastAPI + ASGI server
+fastapi
+uvicorn[standard]
+
+# OpenAI API client
+openai
+
+# PostgreSQL DB driver
+psycopg[binary]   # Better than psycopg2, works well with PostgreSQL 15
+
+# JWT Authentication
+python-jose[cryptography]
+
+# Pydantic for data models
+pydantic
+
+# Optional: environment variable management
+python-dotenv
+
+# Optional: if you decide to use pgvector for semantic search
+# pgvector
+
+PyYAML

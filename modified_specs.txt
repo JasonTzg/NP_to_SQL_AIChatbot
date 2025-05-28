@@ -1,0 +1,1 @@
+Table raw_telemetry and processed_metrics is being modified - (ts, vehicle_id) are primary key instead of ts alone. Data given can't be inserted with ts being PK alone.

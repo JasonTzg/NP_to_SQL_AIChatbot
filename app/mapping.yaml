@@ -1,0 +1,4 @@
+battery level: battery_status.soc_pct
+timestamp: battery_status.ts
+vehicle id: battery_status.vehicle_id
+fleet name: fleets.name
