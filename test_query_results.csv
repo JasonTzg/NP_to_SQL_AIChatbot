@@ -1,0 +1,222 @@
+fleet_id,query,sql_used,db_return_result,response,expected_keyword_to_check,passed,reason,human explanation
+1,What is the SOC of vehicle GBM6296G right now?,"SELECT raw_telemetry.soc_pct
+FROM raw_telemetry
+JOIN vehicles ON raw_telemetry.vehicle_id = vehicles.vehicle_id
+WHERE vehicles.vin = 'GBM6296G' AND vehicles.fleet_id = 1
+ORDER BY raw_telemetry.ts DESC
+LIMIT 1",[{'soc_pct': 57.0}],The current State of Charge (SOC) for vehicle GBM6296G is 57%.,GBM6296G,TRUE,Keyword found,
+2,What is the SOC of vehicle GBM6296G right now?,"SELECT raw_telemetry.soc_pct
+FROM raw_telemetry
+JOIN vehicles ON raw_telemetry.vehicle_id = vehicles.vehicle_id
+WHERE vehicles.vin = 'GBM6296G' AND vehicles.fleet_id = 2
+ORDER BY raw_telemetry.ts DESC
+LIMIT 1",[],There is no available data on the State of Charge (SOC) for vehicle GBM6296G at the moment.,GBM6296G,TRUE,Keyword found,
+3,What is the SOC of vehicle GBM6296G right now?,"SELECT raw_telemetry.soc_pct
+FROM raw_telemetry
+JOIN vehicles ON raw_telemetry.vehicle_id = vehicles.vehicle_id
+WHERE vehicles.vin = 'GBM6296G' AND vehicles.fleet_id = 3
+ORDER BY raw_telemetry.ts DESC
+LIMIT 1",[],There is no current SOC data available for vehicle GBM6296G.,GBM6296G,TRUE,Empty fleet valid response,
+1,How many SRM T3 EVs are in my fleet?,"SELECT COUNT(*) 
+FROM vehicles 
+WHERE fleet_id = 1 
+  AND model = 'SRM T3'",[{'count': 2}],There are 2 SRM T3 EVs in your fleet.,SRM T3,TRUE,Keyword found,
+2,How many SRM T3 EVs are in my fleet?,"SELECT COUNT(*) 
+FROM vehicles 
+WHERE fleet_id = 2 
+  AND model LIKE '%SRM T3%'",[{'count': 0}],There are no SRM T3 EVs in your fleet.,SRM T3,TRUE,Keyword found,
+3,How many SRM T3 EVs are in my fleet?,"SELECT COUNT(*) 
+FROM vehicles 
+WHERE fleet_id = 3 
+  AND model LIKE '%SRM T3%'",[{'count': 0}],There are no SRM T3 EVs in your fleet.,SRM T3,TRUE,Empty fleet valid response,
+1,Did any SRM T3 exceed 33 °C battery temperature in the last 24 h?,"SELECT 
+    vehicle_id, 
+    ts, 
+    batt_temp_c
+FROM 
+    raw_telemetry
+WHERE 
+    batt_temp_c > 33
+    AND ts >= NOW() - INTERVAL '24 hours'
+    AND vehicle_id IN (
+        SELECT vehicle_id FROM vehicles WHERE fleet_id = 1
+    )",[],"No, no SRM T3 vehicles exceeded a battery temperature of 33 C in the last 24 hours.",battery temperature,TRUE,Keyword found,
+2,Did any SRM T3 exceed 33 °C battery temperature in the last 24 h?,"SELECT vehicle_id, batt_temp_c, ts
+FROM raw_telemetry
+WHERE batt_temp_c > 33
+  AND ts >= NOW() - INTERVAL '24 hours'
+  AND vehicle_id IN (
+    SELECT vehicle_id FROM vehicles WHERE fleet_id = 2
+  )",[],"No, no SRM T3 vehicles exceeded a battery temperature of 33 C in the last 24 hours.",battery temperature,TRUE,Keyword found,
+3,Did any SRM T3 exceed 33 °C battery temperature in the last 24 h?,"SELECT vehicle_id, batt_temp_c, ts
+FROM raw_telemetry
+WHERE batt_temp_c > 33
+  AND ts >= NOW() - INTERVAL '24 hours'
+  AND vehicle_id IN (
+    SELECT vehicle_id FROM vehicles WHERE fleet_id = 3
+  )",[],"No, none of the SRM T3 vehicles exceeded a battery temperature of 33 C in the last 24 hours.",battery temperature,TRUE,Empty fleet valid response,
+1,What is the fleet‑wide average SOC comfort zone?,"SELECT avg_soc_pct
+FROM fleet_daily_summary
+WHERE fleet_id = 1","[{'avg_soc_pct': 55.0}, {'avg_soc_pct': 60.0}]",The fleet-wide average SOC comfort zone is between 55% and 60%.,comfort zone,TRUE,Keyword found,
+2,What is the fleet‑wide average SOC comfort zone?,"SELECT 
+    AVG(fleet_daily_summary.avg_soc_pct) AS fleet_wide_avg_soc_pct
+FROM 
+    fleet_daily_summary
+WHERE 
+    fleet_id = 2",[{'fleet_wide_avg_soc_pct': 60.0}],The fleet-wide average SOC comfort zone is 60%.,comfort zone,TRUE,Keyword found,
+3,What is the fleet‑wide average SOC comfort zone?,"SELECT 
+  AVG(fleet_daily_summary.avg_soc_pct) AS fleet_wide_avg_soc_pct
+FROM 
+  fleet_daily_summary
+WHERE 
+  fleet_id = 3",[{'fleet_wide_avg_soc_pct': None}],The fleet-wide average SOC comfort zone is currently unavailable or not recorded.,comfort zone,TRUE,Empty fleet valid response,
+1,Which vehicles spent > 20 % time in the 90‑100 % SOC band this week?,,,,SOC band,FALSE,Status code 500,"No SQL produced, but Fleet 2 and 3 succeeded"
+2,Which vehicles spent > 20 % time in the 90‑100 % SOC band this week?,"SELECT v.vehicle_id, v.vin, v.model, v.make, v.variant
+FROM vehicles v
+JOIN processed_metrics pm ON v.vehicle_id = pm.vehicle_id
+WHERE v.fleet_id = 2
+  AND pm.ts >= DATE_TRUNC('week', CURRENT_DATE)
+  AND pm.soc_band = '80-100' 
+GROUP BY v.vehicle_id, v.vin, v.model, v.make, v.variant
+HAVING COUNT(*) * 1.0 / COUNT(pm.ts) > 0.2",[],No vehicles in fleet 2 spent more than 20% of this week in the 90100% SOC band.,SOC band,TRUE,Keyword found,
+3,Which vehicles spent > 20 % time in the 90‑100 % SOC band this week?,"SELECT v.vehicle_id, v.vin, v.model, v.make, v.variant
+FROM vehicles v
+JOIN processed_metrics pm ON v.vehicle_id = pm.vehicle_id
+WHERE v.fleet_id = 3
+  AND pm.ts >= DATE_TRUNC('week', CURRENT_DATE)
+  AND pm.soc_band = '80-100' 
+GROUP BY v.vehicle_id, v.vin, v.model, v.make, v.variant
+HAVING COUNT(*)::float / (SELECT COUNT(*) FROM processed_metrics pm2 WHERE pm2.vehicle_id = v.vehicle_id AND pm2.ts >= DATE_TRUNC('week', CURRENT_DATE)) > 0.2",[],No vehicles in fleet 3 spent more than 20% of the time in the 90100% SOC band this week.,SOC band,TRUE,Empty fleet valid response,
+1,How many vehicles are currently driving with SOC < 30 %?,"SELECT COUNT(*) 
+FROM vehicles v
+JOIN raw_telemetry rt ON v.vehicle_id = rt.vehicle_id
+WHERE v.fleet_id = 1
+  AND rt.ts = (SELECT MAX(ts) FROM raw_telemetry rt2 WHERE rt2.vehicle_id = v.vehicle_id)
+  AND rt.soc_pct < 30",[{'count': 0}],There are currently no vehicles driving with a State of Charge (SOC) below 30%.,below 30%,TRUE,Keyword found,
+2,How many vehicles are currently driving with SOC < 30 %?,"SELECT COUNT(*) 
+FROM vehicles v
+JOIN raw_telemetry rt ON v.vehicle_id = rt.vehicle_id
+WHERE v.fleet_id = 2
+  AND rt.ts = (SELECT MAX(ts) FROM raw_telemetry rt2 WHERE rt2.vehicle_id = v.vehicle_id)
+  AND rt.soc_pct < 30",[{'count': 1}],There is currently 1 vehicle driving with a State of Charge (SOC) below 30%.,below 30%,TRUE,Keyword found,
+3,How many vehicles are currently driving with SOC < 30 %?,"SELECT COUNT(*) 
+FROM vehicles v
+JOIN raw_telemetry rt ON v.vehicle_id = rt.vehicle_id
+WHERE v.fleet_id = 3
+  AND rt.ts = (SELECT MAX(ts) FROM raw_telemetry rt2 WHERE rt2.vehicle_id = v.vehicle_id)
+  AND rt.soc_pct < 30",[{'count': 0}],There are currently no vehicles driving with a State of Charge (SOC) below 30%.,below 30%,TRUE,Empty fleet valid response,
+1,"What is the total km and driving hours by my fleet over the past 7 days, and which are the most-used & least-used vehicles?","SELECT 
+    SUM(trips.distance_km) AS total_distance_km,
+    SUM(trips.idle_minutes) / 60 AS total_driving_hours,
+    v.vehicle_id,
+    v.vin,
+    v.model,
+    v.make,
+    v.variant,
+    COUNT(trips.trip_id) AS trip_count
+FROM 
+    vehicles v
+JOIN 
+    trips ON v.vehicle_id = trips.vehicle_id
+WHERE 
+    v.fleet_id = 1
+    AND trips.start_ts >= NOW() - INTERVAL '7 days'
+GROUP BY 
+    v.vehicle_id, v.vin, v.model, v.make, v.variant
+ORDER BY 
+    trip_count DESC",[],"There is no trip data available for your fleet over the past 7 days. Therefore, total kilometers driven and driving hours cannot be calculated, and no vehicles can be identified as most-used or least-used.",past 7 days,TRUE,Keyword found,
+2,"What is the total km and driving hours by my fleet over the past 7 days, and which are the most-used & least-used vehicles?","SELECT 
+    SUM(trips.distance_km) AS total_distance_km,
+    SUM(trips.idle_minutes) / 60 AS total_driving_hours,
+    v.vehicle_id,
+    v.vin,
+    v.model,
+    v.make,
+    v.variant,
+    COUNT(trips.trip_id) AS trip_count
+FROM 
+    vehicles v
+JOIN 
+    trips ON v.vehicle_id = trips.vehicle_id
+WHERE 
+    v.fleet_id = 2
+    AND trips.start_ts >= CURRENT_DATE - INTERVAL '7 days'
+GROUP BY 
+    v.vehicle_id, v.vin, v.model, v.make, v.variant
+ORDER BY 
+    trip_count DESC",[],"There is no trip data available for your fleet over the past 7 days. Therefore, I cannot provide total kilometers driven, driving hours, or identify the most- and least-used vehicles.",past 7 days,TRUE,Keyword found,
+3,"What is the total km and driving hours by my fleet over the past 7 days, and which are the most-used & least-used vehicles?","SELECT 
+    SUM(trips.distance_km) AS total_distance_km,
+    SUM(trips.idle_minutes) / 60 AS total_driving_hours,
+    v.vehicle_id,
+    v.vin,
+    v.model,
+    v.make,
+    v.variant,
+    COUNT(trips.trip_id) AS trip_count
+FROM 
+    trips
+JOIN 
+    vehicles v ON trips.vehicle_id = v.vehicle_id
+WHERE 
+    v.fleet_id = 3
+    AND trips.start_ts >= CURRENT_DATE - INTERVAL '7 days'
+GROUP BY 
+    v.vehicle_id, v.vin, v.model, v.make, v.variant
+ORDER BY 
+    trip_count DESC",[],"There is no trip data available for your fleet over the past 7 days. Therefore, the total kilometers driven and driving hours are currently zero, and no vehicles can be identified as most-used or least-used.",past 7 days,TRUE,Empty fleet valid response,
+1,"Does my vehicles have any unresolved alerts? If yes, give me the vehicle vin with the severity of the alert. ","SELECT v.vin, a.severity
+FROM alerts a
+JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+WHERE v.fleet_id = 1 AND a.resolved_bool = false","[{'vin': 'GBM6296G', 'severity': 'High'}]","Yes, your vehicle with VIN GBM6296G has an unresolved alert with a severity level of High.",alert,TRUE,Keyword found,
+2,"Does my vehicles have any unresolved alerts? If yes, give me the vehicle vin with the severity of the alert. ","SELECT v.vin, a.severity
+FROM alerts a
+JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+WHERE v.fleet_id = 2 AND a.resolved_bool = false","[{'vin': 'LDN8888', 'severity': 'Medium'}]","Yes, your vehicle with VIN LDN8888 has an unresolved alert with a severity level of Medium.",alert,TRUE,Keyword found,
+3,"Does my vehicles have any unresolved alerts? If yes, give me the vehicle vin with the severity of the alert. ","SELECT v.vin, a.severity
+FROM alerts a
+JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+WHERE v.fleet_id = 3 AND a.resolved_bool = false",[],There are no unresolved alerts for your vehicles in fleet 3.,alert,TRUE,Empty fleet valid response,
+1,Give me the latest summary of my fleet's daily performance.,"SELECT 
+    date,
+    total_distance_km,
+    total_energy_kwh,
+    active_vehicles,
+    avg_soc_pct
+FROM 
+    fleet_daily_summary
+WHERE 
+    fleet_id = 1
+ORDER BY 
+    date DESC
+LIMIT 1","[{'date': '2025-05-14', 'total_distance_km': 320.0, 'total_energy_kwh': 260.0, 'active_vehicles': 3, 'avg_soc_pct': 60.0}]","As of May 14, 2025, your fleet traveled a total of 320 km, used 260 kWh of energy, had 3 active vehicles, and an average state of charge of 60%.",fleet,TRUE,Keyword found,
+2,Give me the latest summary of my fleet's daily performance.,"SELECT 
+    date,
+    total_distance_km,
+    total_energy_kwh,
+    active_vehicles,
+    avg_soc_pct
+FROM 
+    fleet_daily_summary
+WHERE 
+    fleet_id = 2
+ORDER BY 
+    date DESC
+LIMIT 1","[{'date': '2025-05-14', 'total_distance_km': 390.0, 'total_energy_kwh': 330.0, 'active_vehicles': 3, 'avg_soc_pct': 62.0}]","As of May 14, 2025, your fleet traveled a total of 390 km, used 330 kWh of energy, had 3 active vehicles, and the average State of Charge was 62%.",fleet,TRUE,Keyword found,
+3,Give me the latest summary of my fleet's daily performance.,"SELECT 
+    date,
+    total_distance_km,
+    total_energy_kwh,
+    active_vehicles,
+    avg_soc_pct
+FROM 
+    fleet_daily_summary
+WHERE 
+    fleet_id = 3
+ORDER BY 
+    date DESC
+LIMIT 1",[],It appears there is no recent data available for your fleet's daily performance. Please check back later or ensure the data has been properly recorded.,fleet,TRUE,Empty fleet valid response,
+1,Give me the total maintenance cost of all my vehicles in the last 2 months.,,,,cost,FALSE,Status code 500,"Not able to pick up maintenance_log data. No SQL, no results"
+2,Give me the total maintenance cost of all my vehicles in the last 2 months.,,,,cost,FALSE,Status code 500,"Not able to pick up maintenance_log data. No SQL, no results"
+3,Give me the total maintenance cost of all my vehicles in the last 2 months.,,,,cost,FALSE,Status code 500,"Not able to pick up maintenance_log data. No SQL, no results"
+,,,,,,26,,

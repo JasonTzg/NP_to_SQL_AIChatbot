@@ -1,6 +1,7 @@
 import yaml
 import os
 
+# Extract mappings and learning points from YAML files
 def load_mappings_learningpoints():
     with open("app/mapping.yaml", "r") as f:
         mappings = yaml.safe_load(f)
@@ -58,7 +59,6 @@ def get_sql_from_openai(nl_query: str, client, fleet_id) -> str:
         temperature=0
     )
     return response.choices[0].message.content.strip()
-
 
 def get_readabletext_from_openai(user_query: str, sql, text_result, client) -> str:
     print("Doing SQL to Readable Text conversion...")

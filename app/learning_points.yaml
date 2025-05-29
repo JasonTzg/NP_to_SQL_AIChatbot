@@ -1,1 +1,7 @@
-Do not include: Any EV, EVs, EVS in SQL queries
+Remove All: EV , EVs , EVS , % in SQL queries
+Model , Make , Variant: Does not include EV , EVs , EVS
+fleet_id exists only in tables, thus you MUST use either of the table to do filtering of fleet_id:
+  - fleets
+  - vehicles
+  - drivers
+  - fleet_daily_summary

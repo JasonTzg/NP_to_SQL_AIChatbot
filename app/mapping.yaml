@@ -1,12 +1,11 @@
 terminalogy:
-  soc: state of charge. refers to battery fuel gauge which expressed as a %. 
-  soc band enum: enum of soc bands, e.g. 0-20%, 20-40%, 40-60%, 60-80%, 80-100%
+  soc: state of charge
+  soc band enum: enum of soc bands, e.g. 0-20, 20-40, 40-60, 60-80, 80-100
   soh: state of health. 100% when just manufactured, degrades over time
-  soc comfort zone: healthy range between 30% and 80%, operating outside will led to battery degradation 
+  soc comfort zone: compare to fleet soc or vehicle soc, healthy range ranges between 30% and 80%, operating outside will led to battery degradation
   pct: percentage
   alerts severity enum: HighTemp, Overcharge, LowSOC etc.
   ts: timestamp
-  EVs or EV or EVS: electric vehicles
   vin: vehicle identification number, unique identifier for each vehicle
 
 vehicle registration plate: vehicles.vin
@@ -34,4 +33,7 @@ trips covered distance: trips.distance_km
 trips used energy: trips.energy_kwh
 trips idling time: trips.idle_minutes
 
+vehicle maintenance cost: maintenance_logs.cost_sgd
+
 overall fleet summary: fleet_daily_summary
+fleet soc: fleet_daily_summary.avg_soc_pct

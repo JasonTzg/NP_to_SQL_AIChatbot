@@ -21,4 +21,6 @@ python-dotenv
 # pgvector
 PyYAML
 
-python-dotenv
+# testing 
+pytest
+httpx

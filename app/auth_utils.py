@@ -30,10 +30,9 @@ def get_current_fleet_id(jwt_secret: str):
         return fleet_id
     return dependency
 
+# find the WHERE clause in SQL and find the first 'fleet_id', then from the 'fleet_id' find the next clause keyword (AND, GROUP BY, ORDER BY, etc.) and return from the start of 'fleet_id' to the end of that clause 
 def extract_where_clause(sql: str) -> str:
-    # Define regex for matching clause keywords that can follow WHERE
-    clause_keywords = r"\b(AND|GROUP BY|ORDER BY|HAVING|LIMIT|OFFSET|UNION|EXCEPT|INTERSECT)\b"
-
+    # Lowercase for searching, but keep original for extraction
     sql_lower = sql.lower()
     where_match = re.search(r"\bwhere\b", sql_lower)
     if not where_match:
@@ -41,14 +40,20 @@ def extract_where_clause(sql: str) -> str:
 
     start = where_match.start()
 
-    # Search for the next clause keyword after WHERE
-    next_clause_match = re.search(clause_keywords, sql[start:], re.IGNORECASE) # added re.IGNORECASE to match case-insensitively
+    # Find 'fleet_id' after WHERE
+    fleet_id_match = re.search(r"fleet_id\s*=\s*\d+", sql_lower[start:])
+    if not fleet_id_match:
+        return ""  # fleet_id not found
+    
+    clause_keywords = r"\b(AND|GROUP BY|ORDER BY|HAVING|LIMIT|OFFSET|UNION|EXCEPT|INTERSECT)\b"
+    next_clause_match = re.search(clause_keywords, sql_lower[start + fleet_id_match.end():], re.IGNORECASE)
     if next_clause_match:
-        end = start + next_clause_match.start()
+        clause_end = start + fleet_id_match.end() + next_clause_match.start()
     else:
-        end = len(sql)  # no further clause, take till the end
-
-    where_clause = sql[start:end].strip()
+        clause_end = len(sql)
+        
+    # Extract from fleet_id=... up to next clause
+    where_clause = sql[start + fleet_id_match.start():clause_end].strip()
     return where_clause
 
 def check_sql_and_where_for_disallowed(sql:str, where_clause: str, allowed_fleet_id: int):
@@ -87,6 +92,5 @@ def check_sql(sql: str, allowed_fleet_id: int) -> str:
         check_sql_and_where_for_disallowed(sql, where_clause, allowed_fleet_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    # check_sql_and_where_for_disallowed(sql, where_clause, allowed_fleet_id)
     
     return True
