@@ -6,9 +6,15 @@ terminalogy:
   pct: percentage
   alerts severity enum: HighTemp, Overcharge, LowSOC etc.
   ts: timestamp
+  EVs or EV or EVS: electric vehicles
+  vin: vehicle identification number, unique identifier for each vehicle
 
 vehicle registration plate: vehicles.vin
 vehicle license plate number: vehicles.vin
+vehicle model can be referred as either: 
+  - vehicles.model
+  - vehicles.variant
+vehicle.model: combination of vehicle.make and vehicle.model
 vehicle manufacturer: vehicles.make
 vehicle purchase date: vehicles.purchase_date
 

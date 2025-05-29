@@ -9,7 +9,7 @@ openai
 psycopg[binary]   # Better than psycopg2, works well with PostgreSQL 15
 
 # JWT Authentication
-python-jose[cryptography]
+PyJWT
 
 # Pydantic for data models
 pydantic

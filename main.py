@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from app.openai_utils import get_sql_from_openai, get_readabletext_from_openai
+from app.auth_utils import get_current_fleet_id, check_sql
 from dotenv import load_dotenv
 from openai import OpenAI
 import psycopg
@@ -13,6 +14,7 @@ app = FastAPI()
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY", ""),
 )
+jwt_secret = os.getenv("JWT_SECRET")
 
 class QueryRequest(BaseModel):
     query: str
@@ -25,11 +27,14 @@ def ping():
     return {"status": "ok"}
 
 @app.post("/query")
-def run_query(request: QueryRequest):
+def run_query(request: QueryRequest, fleet_id: int = Depends(get_current_fleet_id(jwt_secret))):
     try:
-        sql = get_sql_from_openai(request.query, client)
+        sql = get_sql_from_openai(request.query, client, fleet_id)
         # sql = "SELECT * FROM raw_telemetry WHERE vehicle_id = (SELECT vehicle_id FROM vehicles WHERE registration_no = 'GBM6296G') ORDER BY ts DESC LIMIT 1;"
         print(f"[Generated SQL] {sql}")
+        check_sql(sql, fleet_id)
+        print(f"[SQL safe]")
+        
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
@@ -42,3 +47,4 @@ def run_query(request: QueryRequest):
                 return human_readable_text
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
