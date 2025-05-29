@@ -38,7 +38,7 @@ curl -X POST http://localhost:8000/chat ^
 ```
 --> For only fleet 1 token. Fleet 2 and 3 token does not have any SRM T3 EVs in their fleet.
 
-Please look at the test_query_results.csv for all the test completed in test_query.py. 26/30 Tests passed overall. 4 tests did not get converted from NP to SQL using gpt-4.1-nano.  
+Please look at the test_query_results.csv for all the test completed in test_query.py. <span style="color: green;"> 26/30 Tests passed overall. </span> <span style="color: red;"> 4 tests </span> did not get converted from NP to SQL using gpt-4.1-nano.  
 All unit test for auth_utils.py is done in test_auth_utils.py. All passes.
 
 ---
