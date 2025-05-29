@@ -22,7 +22,7 @@ fleet_id 2 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbGVldF9pZCI6Mn0.7eMYo
 fleet_id 3 (does not have any data) token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbGVldF9pZCI6M30.4uZe5wr4BRbJbF-V9mW3-HFBnzhlIOG37tpXL8HpnnI  
 
 ```bash
-curl -X POST http://localhost:8000/chat ^
+curl -X POST https://np-to-sql-aichatbot.onrender.com/chat ^
 -H "Authorization: Bearer <any_token_above>" ^
 -H "Content-Type: application/json" ^
 -d "{\"query\": \"How many SRM T3 EVs are in my fleet?\"}"
