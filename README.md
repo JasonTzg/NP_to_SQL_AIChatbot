@@ -4,15 +4,15 @@ AI Chatbot Assistant to support natural language QnA powered by LLM (gpt-4.1-nan
 
 ## 🚀 Demo (Hosted on Render)
 
-- **Health check**: [`https://your-app.onrender.com/ping`](https://your-app.onrender.com/ping)
+- **Health check**: [`https://np-to-sql-aichatbot.onrender.com/ping`](https://np-to-sql-aichatbot.onrender.com/ping)
 - **Query endpoint**: `/chat`
 
 ## 🔐 Authentication
 
-All requests require a JWT token with a `fleet_id` claim.
-JWT authentication with fleet_id row-level enforcement
-Post-LLM SQL inspection on WHERE clause to block injection patterns (WHERE fleet_id = 1 or 2=2 etc.)
-Post-LLM SQL inspection to block injection patterns (;, --, DROP, etc.)
+All requests require a JWT token with a `fleet_id` claim.  /
+JWT authentication with fleet_id row-level enforcement  /
+Post-LLM SQL inspection on WHERE clause to block injection patterns (WHERE fleet_id = 1 or 2=2 etc.)  /
+Post-LLM SQL inspection to block injection patterns (;, --, DROP, etc.)  /
 Reject queries missing proper WHERE fleet_id = X
 
 ## 🧪 Example Request (via curl)
@@ -28,16 +28,17 @@ curl -X POST http://localhost:8000/chat ^
 -d "{\"query\": \"How many SRM T3 EVs are in my fleet?\"}"
 ```
 
-# Expected Response:
+### Expected Response:
+```json
 {
     "sql":"SELECT COUNT(*) \nFROM vehicles \nWHERE fleet_id = 1 \n  AND model = 'SRM T3'",
     "raw_results":[{"count":2}],
     "human_readable_text":"You have 2 SRM T3 EVs in your fleet."
 }
-
+```
 --> For only fleet 1 token. Fleet 2 and 3 token does not have any SRM T3 EVs in their fleet.
 
-Please look at the test_query_results.csv for all the test completed in test_query.py. 26/30 Tests passed overall. 4 tests did not get converted from NP to SQL using gpt-4.1-nano. 
+Please look at the test_query_results.csv for all the test completed in test_query.py. 26/30 Tests passed overall. 4 tests did not get converted from NP to SQL using gpt-4.1-nano.  /
 All unit test for auth_utils.py is done in test_auth_utils.py. All passes.
 
 ---
