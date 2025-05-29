@@ -1,8 +1,5 @@
-import openai
 import yaml
-from .config import OPENAI_API_KEY
-
-openai.api_key = OPENAI_API_KEY
+import os
 
 def load_mappings():
     with open("app/mapping.yaml", "r") as f:
@@ -13,7 +10,9 @@ def build_prompt(nl_query: str):
     mapping_str = "\n".join(f'- "{k}" → {v}' for k, v in mappings.items())
 
     prompt = f"""
-You are an Expert in converting natural language query into a SQL query. Your task is to return a SQL query given the database table structure, the term mapping, and the user query.
+Your task is to return a SQL query given the database table structure, the term mapping, and the user query.
+User's questions are usually checking on the latest fleet conditions or latest vehicle data. 
+
 The database has the 13 following tables with their respective columns:
 fleets (fleet_id(PK),name,country,time_zone),
 vehicles (vehicle_id(PK),vin,fleet_id(FK),model,make,variant,registration_no,purchase_date),
@@ -39,11 +38,32 @@ Convert it to a SQL query:
 
     return prompt
 
-def get_sql_from_openai(nl_query: str) -> str:
+def get_sql_from_openai(nl_query: str, client) -> str:
+    print("Doing NL to SQL conversion...")
+    print(f"[NL Query] {nl_query}")
     prompt = build_prompt(nl_query)
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4.1-nano",
         messages=[{"role": "user", "content": prompt}],
         temperature=0
     )
+    return response.choices[0].message.content.strip()
+
+
+def get_readabletext_from_openai(user_query: str, sql, text_result, client) -> str:
+    print("Doing SQL to Readable Text conversion...")
+    # print(f"[User Query] {user_query}")
+    # print(f"[Text Result] {text_result}")
+    
+    response = client.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=[
+            {"role": "system", "content": f"""Your task is to use the database result or/and sql, and return concise and human-readable answers to the user's query. 
+             User query: {user_query}. 
+             SQL used: {sql}. 
+             Given result from previous LLM to SQL to Database: {text_result}""".strip()},
+        ],
+        temperature=0.25
+    )
+    
     return response.choices[0].message.content.strip()

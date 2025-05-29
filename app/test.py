@@ -1,42 +1,24 @@
+import json
 
-import os
-import csv
-import psycopg
-from dotenv import load_dotenv
+{"sql":"SELECT * FROM raw_telemetry WHERE vehicle_id = (SELECT vehicle_id FROM vehicles WHERE registration_no = 'GBM6296G') ORDER BY ts DESC LIMIT 1;","results":[{"ts":"2025-05-14T09:00:00+00:00","vehicle_id":1,"soc_pct":57.0,"pack_voltage_v":356.9,"pack_current_a":-86.1,"batt_temp_c":32.3,"latitude":1.3273068340788692,"longitude":103.84852215206607,"speed_kph":0.0,"odo_km":10000.0}]}
 
-load_dotenv()
-db_url = os.getenv("DATABASE_URL")
-# get all data from alerts 
+format_prompt = f"""You are a helpful assistant.
+The user asked the following question:
+"{prompt}"
 
-data_table_insert_order = [
-    "fleets",
-    "vehicles",
-    "raw_telemetry",
-    "processed_metrics",
-    "charging_sessions",
-    "trips",
-    "alerts",
-    "battery_cycles",
-    "maintenance_logs",
-    "drivers",
-    "driver_trip_map",
-    "geofence_events",
-    "fleet_daily_summary"
-]
+The database returned the following results:
+{json.dumps(results, indent=2)}
 
-with psycopg.connect(db_url) as conn:
-    with conn.cursor() as cur:
-        # SQL query to select all data from the alerts table
-        for each in data_table_insert_order:
-            print(f"📥 Fetching data from {each} table...")
-            query = f"SELECT * FROM {each};"
-            cur.execute(query)
-            
-            rows = cur.fetchall()
-            
-            for row in rows:
-                print(row)
+Please write a clear and concise summary of the result for the user.
+"""
 
-        conn.commit()
-        print("✅ Connection closed successfully.")
-        conn.close()
+response2 = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You're a helpful data summarizer."},
+        {"role": "user", "content": format_prompt}
+    ],
+    temperature=0,
+)
+
+final_answer = response2.choices[0].message.content

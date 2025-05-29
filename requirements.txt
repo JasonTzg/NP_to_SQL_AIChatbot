@@ -19,5 +19,6 @@ python-dotenv
 
 # Optional: if you decide to use pgvector for semantic search
 # pgvector
-
 PyYAML
+
+python-dotenv

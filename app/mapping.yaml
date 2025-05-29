@@ -1,4 +1,31 @@
-battery level: battery_status.soc_pct
-timestamp: battery_status.ts
-vehicle id: battery_status.vehicle_id
-fleet name: fleets.name
+terminalogy:
+  soc: state of charge. refers to battery fuel gauge which expressed as a %. 
+  soc band enum: enum of soc bands, e.g. 0-20%, 20-40%, 40-60%, 60-80%, 80-100%
+  soh: state of health. 100% when just manufactured, degrades over time
+  soc comfort zone: healthy range between 30% and 80%, operating outside will led to battery degradation 
+  pct: percentage
+  alerts severity enum: HighTemp, Overcharge, LowSOC etc.
+  ts: timestamp
+
+vehicle registration plate: vehicles.vin
+vehicle license plate number: vehicles.vin
+vehicle manufacturer: vehicles.make
+vehicle purchase date: vehicles.purchase_date
+
+driver license number: drivers.license_no
+driver official start work date: drivers.hire_date
+
+vehicle soc pct: raw_telemetry.soc_pct
+vehicle average speed: processed_metrics.avg_speed_kph_15m
+vehicle battery health pct: processed_metrics.battery_health_pct
+
+vehicle charging start time: charging_sessions.start_ts
+vehicle charging end time: charging_sessions.end_ts
+vehicle before charging soc pct: charging_sessions.start_soc
+vehicle after charging soc pct: charging_sessions.end_soc
+
+trips covered distance: trips.distance_km
+trips used energy: trips.energy_kwh
+trips idling time: trips.idle_minutes
+
+overall fleet summary: fleet_daily_summary

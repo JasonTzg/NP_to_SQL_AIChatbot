@@ -1,0 +1,8 @@
+﻿Qn.No.,Questions,GroundTruth,Explanation
+1,What is the SOC of vehicle GBM6296G right now?,Null,Database does not have today data on GBM6296G
+2,How many SRM T3 EVs are in my fleet?,2 of it in fleet 1,"model = SRM T3 and make = SRM, there are 2 Evs"
+3,Did any SRM T3 exceed 33 °C battery temperature in the last 24 h?,only 2 data in fleet 1 have exceeded ,
+4,What is the fleet‑wide average SOC comfort zone?,,"SOC comfort zone lies inbetween 30 to 80%. Fleet daily summery did not have any data that went pass the comfort zone. However, in the charging session, vehicle id 1 and 6 went beyond the SOC comfort zone."
+5,Which vehicles spent > 20 % time in the 90‑100 % SOC band this week?,none,
+6,How many vehicles are currently driving with SOC < 30 %?,,
+7,"What is the total km and driving hours by my fleet over the past 7 days, and which are the most-used & least-used vehicles?",,

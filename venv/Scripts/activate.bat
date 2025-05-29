@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set "VIRTUAL_ENV=C:\Users\havin\Desktop\SoftwareWork\InterviewAssessment\venv"
+set "VIRTUAL_ENV=C:\Users\havin\Desktop\SoftwareWork\InterviewAssessment\QnA_chatbot\NP_to_SQL_AIChatbot\venv"
 
 if not defined PROMPT set PROMPT=$P$G
 
