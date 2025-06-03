@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI SQL Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/index.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <!-- <script src="/static/sortable.min.js"></script> <!- For draggable support -->
+
+</head>
+<body>
+  <div class="main-container">
+    <!-- Chat Section -->
+    <div class="chat-section">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2>Ask the Assistant</h2>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label for="fleet-select" style="margin: 0;">Fleet:</label>
+          <select id="fleet-select" class="select" name="fleet" required>
+            <option value="" disabled selected>Select fleet</option>
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+      </div>
+      <form id="chat-form">
+        <textarea id="query" placeholder="Example text: Give me the latest summary of my fleet's daily performance."rows="4" required>
+          Give me the latest summary of my fleet's daily performance.
+        </textarea>
+        <div style="justify-self: center;">
+          <button type="submit" class="button-30" role="button">Send Request</button>
+        </div>
+      </form>
+      <div id="response-box">
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="history-section">
+      <h2>History</h2>
+      <div id="history-container" class="history-list"></div>
+    </div>
+  </div>
+
+</body>
+</html>

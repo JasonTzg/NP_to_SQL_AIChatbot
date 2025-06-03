@@ -8,6 +8,12 @@ from openai import OpenAI
 import psycopg
 import os
 
+# frontend imports
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from fastapi import Request
+
 load_dotenv()  # This will load .env into os.environ
 
 # Initialize FastAPI, OpenAI client, and JWT secret
@@ -17,12 +23,23 @@ client = OpenAI(
 )
 jwt_secret = os.getenv("JWT_SECRET")
 
+# Mount static directory------------------------------------------------------------
+app.mount("/static", StaticFiles(directory="static"), name="static")
+# Setup Jinja2 templates
+templates = Jinja2Templates(directory="templates")
+#-----------------------------------------------------------------------------------
+
 class QueryRequest(BaseModel):
     query: str
 
 # In DB utils. But for simplicity, we define it here.
 def get_connection():
     return psycopg.connect(os.getenv("DATABASE_URL", ""), autocommit=True)
+
+# Landing page
+@app.get("/", response_class=HTMLResponse)
+def serve_form(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # Check if the curl to backend is working
 @app.get("/ping")

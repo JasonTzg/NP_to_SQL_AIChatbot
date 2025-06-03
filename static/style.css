@@ -1,0 +1,171 @@
+@font-face {
+  font-family: 'SourceSans3';
+  src: url('/static/Source_Sans_3/static/SourceSans3-Light.ttf') format('truetype');
+}
+
+:root {
+  --sunset-backgd: #311c67;
+  --sunset-purple: #622395;
+  --sunset-lightpurple: #a3138c;
+  --sunset-orange: #f34a51;
+  --sunset-yellow: #fac93c;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'SourceSans3', Arial, Helvetica, sans-serif;
+  /* background: var(--sunset-backgd); */
+  color: var(--sunset-yellow);
+  letter-spacing: 2px;
+  overflow: hidden;
+  background-color: #120531;
+  /* height: max-content; */
+}
+
+.main-container {
+  display: flex;
+  height: auto;
+  padding: 10px;
+  gap: 10px;
+  
+}
+
+.chat-section, .history-section {
+  flex: 1;
+  /* overflow-y: auto; */
+  background: var(--sunset-backgd);
+  border-radius: 8px;
+}
+
+.chat-section {  
+  padding: 0px 20px 30px 20px;
+  max-height: fit-content;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+.history-section {
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 0px 20px 30px 20px;
+
+}
+
+.history-section h2 {
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: var(--sunset-backgd);
+  padding: 20px;
+}
+
+.history-section::-webkit-scrollbar {
+  width: 10px;
+}
+.history-section::-webkit-scrollbar-thumb {
+  background: var(--sunset-purple);
+  border-radius: 10px;
+}
+
+textarea {
+  background-color: var(--sunset-purple);
+  color: white;
+  border-radius: 6px;
+  width: 95%;
+  font-size: 16px;
+  padding: 10px;
+  min-width: 80%;
+  max-width: 100%;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#response-box {
+  margin-top: 20px;
+  padding: 10px;
+  background:  var(--sunset-purple);
+  border: 1px solid black;
+  border-left: 5px solid #28a745;
+  white-space: pre-wrap;
+  border-radius: 4px;
+  display: none;
+}
+
+.history-card {
+  background: var(--sunset-lightpurple);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: grab;
+  letter-spacing: normal;
+  color: white;
+}
+
+.history-card:hover {
+  background:  var(--sunset-purple);
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+/* CSS */
+.button-30 {
+  align-items: center;
+  background-color: var(--sunset-purple);
+  border-radius: 6px;
+  border-width: 0;
+  color: var(--sunset-yellow);
+  cursor: pointer;
+  height: 48px;
+  padding-left: 16px;
+  padding-right: 16px;
+  transition: box-shadow .15s,transform .15s;
+}
+
+.button-30:hover {
+  box-shadow: var(--sunset-yellow) 0 -3px 0 inset;
+  background-color: var(--sunset-purple);
+  transform: translateY(-2px);
+}
+
+.button-30:active {
+  box-shadow: rgb(110, 110, 21) 0 3px 0px inset;
+  transform: translateY(2px);
+}
+
+.button-30:disabled {
+  background-color: var(--sunset-purple);
+  color: #979393;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.select {
+  appearance: none;
+  width: 100%;
+  padding: 0.675em 2em 0.675em 1em;
+  background-color: #fff;
+  border: 1px solid #caced1;
+  border-radius: 0.25rem;
+  color: #000;
+  cursor: pointer;
+}
