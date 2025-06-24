@@ -4,9 +4,9 @@ AI Chatbot Assistant to support natural language QnA powered by LLM (gpt-4.1-nan
 
 ## 🚀 Demo (Hosted on Render) until 27 June 2025
 
+- **Website**: [`https://np-to-sql-aichatbot.onrender.com/`](https://np-to-sql-aichatbot.onrender.com/) (See below for screenshots if after 27 June)
 - **Health check**: [`https://np-to-sql-aichatbot.onrender.com/ping`](https://np-to-sql-aichatbot.onrender.com/ping)
 - **Query endpoint**: `/chat`
-- **Website**: [`https://np-to-sql-aichatbot.onrender.com/`](https://np-to-sql-aichatbot.onrender.com/) (See below for screenshots if after 27 June)
 
 ## 🔐 Authentication
 
@@ -24,6 +24,14 @@ fleet_id 3 (does not have any data) token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 
 ```bash
 curl -X POST https://np-to-sql-aichatbot.onrender.com/chat ^
+-H "Authorization: Bearer <any_token_above>" ^
+-H "Content-Type: application/json" ^
+-d "{\"query\": \"How many SRM T3 EVs are in my fleet?\"}"
+```
+
+(If you are running on your own localhost)
+```bash
+curl -X POST http://localhost:8000/chat ^
 -H "Authorization: Bearer <any_token_above>" ^
 -H "Content-Type: application/json" ^
 -d "{\"query\": \"How many SRM T3 EVs are in my fleet?\"}"
