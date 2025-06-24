@@ -2,10 +2,11 @@
 
 AI Chatbot Assistant to support natural language QnA powered by LLM (gpt-4.1-nano). Converts plain-English queries into SQL against some dataset, and return a concise, human-readable answers.
 
-## 🚀 Demo (Hosted on Render)
+## 🚀 Demo (Hosted on Render) until 27 June 2025
 
 - **Health check**: [`https://np-to-sql-aichatbot.onrender.com/ping`](https://np-to-sql-aichatbot.onrender.com/ping)
 - **Query endpoint**: `/chat`
+- **Website**: [`https://np-to-sql-aichatbot.onrender.com/`](https://np-to-sql-aichatbot.onrender.com/) (See below for screenshots if after 27 June)
 
 ## 🔐 Authentication
 
@@ -60,3 +61,37 @@ export DATABASE_URL=...
 # Run server
 python -m uvicorn main:app --
 ```
+
+---
+
+## 🖼️ Frontend Screenshots & How It Works
+
+Below are screenshots of the web frontend for NP_to_SQL_AIChatbot:
+
+### 1. Arrival on Website
+![Website Interface Screenshot](/pictures/initial.png)
+- **Designing:** A quick designing of the frontend using a blend of purple, pink, and yellow. 
+
+### 2. Query to the Chatbot to draw data out from Database and answer the user in a human-readable format.
+![SQL and Results Screenshot](/pictures/send_requests.png)
+- **How it works:** User selects the fleetid (act as after login, each user will have an assigned fleetid), then User types on what to ask about their vehicle. Such as 'numbers of vehicle or/and numbers of those vehicle vin', 'total distance travelled for each vehicle', 'right now my fleet has how many vehicles', etc.
+- **How will it reply:** For transparency, the generated SQL and raw database results are shown in the History tab. The human-readable text result from chatbot will be displayed under the Ask Assistant column and also the History tab in each corresponding History card. 
+
+### 3. Simple drag and drop - Reordering
+![Reordering of History Card Screenshot](/pictures/reordering_fav_history.png)
+- **How it works:** User just click and hold to drag and move the Favourite History Card to the top for more easy view. Subsequently in the future, if needed, we can create a Favourite column to save all the users selected History Card. 
+
+### 4. Selecting another fleet - Acting as Logging in with different user
+![Fleet 3 Screenshot](/pictures/trying_other_fleets.png)
+- **How it works:** By selecting another fleet, you will be able to access data only in those related fleet regardless of what you prompt the Assistant. Fleet 1 will only see vehicles' data that is relevant to Fleet id 1. 
+
+### 5. Testing on Fleet 3 which contains no data
+![Fleet 3 prompting Screenshot](/pictures/fleet3_novehicle.png)
+- **How it works:** Prompting the Assistant to help me retrieve vehicle data that is/are under Fleet 3. Which can be seen at the last History Card. 
+
+### 6. History Card Explanation
+![Examples of History Cards Screenshot](/pictures/history_cards.png)
+- **How it works:** Each History card contains - _User Prompt_, _SQL_ converted from User Prompt, _SQL Result_ that went through the Database, and the _Text Response_ from the chatbot.
+- **Why:** This will show clearly to the company on what requests will trigger what type of SQL statement. Allow the company to improve on the system in the future, making it less breakable and more efficient. 
+
+---
