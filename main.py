@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from pydantic import BaseModel
 from app.openai_utils import get_sql_from_openai, get_readabletext_from_openai # from openaiutils file
 from app.auth_utils import get_current_fleet_id, check_sql                      # from authutils file
+from app.import_data import bootstrap_database
 from dotenv import load_dotenv
 from openai import OpenAI
 import psycopg
@@ -15,6 +16,9 @@ from fastapi.responses import HTMLResponse
 from fastapi import Request
 
 load_dotenv()  # This will load .env into os.environ
+
+# Initialize database schema and seed data before the web app starts.
+bootstrap_database()
 
 # Initialize FastAPI, OpenAI client, and JWT secret
 app = FastAPI()

@@ -208,27 +208,72 @@ data_table_insert_order = [
 def sanitize_row(row):
     return [None if v == '' else v for v in row]
 
+def table_exists(cur, table_name):
+    cur.execute(
+        """
+        SELECT EXISTS (
+            SELECT 1
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+              AND table_name = %s
+        )
+        """,
+        (table_name,)
+    )
+    return cur.fetchone()[0]
+
+def table_has_rows(cur, table_name):
+    cur.execute(f"SELECT 1 FROM {table_name} LIMIT 1")
+    return cur.fetchone() is not None
+
+def ensure_schema(cur):
+    # Create all tables in the correct order
+    cur.execute(create_fleets_table)
+    cur.execute(create_vehicles_table)
+    cur.execute(create_real_time_telemetry_table)
+    cur.execute(create_processed_metrics_table)
+    cur.execute(create_charging_sessions_table)
+    cur.execute(create_trips_table)
+    cur.execute(create_alerts_table)
+    cur.execute(create_battery_health_table)
+    cur.execute(create_maintenance_table)
+    cur.execute(create_drivers_table)
+    cur.execute(create_driver_trip_link_table)
+    cur.execute(create_geofence_events_table)
+    cur.execute(create_fleet_daily_summary_table)
+
 def init_schema():
     try:
         with psycopg.connect(db_url) as conn:
             with conn.cursor() as cur:
-                # Create all tables in the correct order
-                cur.execute(create_fleets_table)
-                cur.execute(create_vehicles_table)
-                cur.execute(create_real_time_telemetry_table)
-                cur.execute(create_processed_metrics_table)
-                cur.execute(create_charging_sessions_table)
-                cur.execute(create_trips_table)
-                cur.execute(create_alerts_table)
-                cur.execute(create_battery_health_table)
-                cur.execute(create_maintenance_table)
-                cur.execute(create_drivers_table)
-                cur.execute(create_driver_trip_link_table)
-                cur.execute(create_geofence_events_table)
-                cur.execute(create_fleet_daily_summary_table)
+                ensure_schema(cur)
                 print("✅ Tables created or already exist.")
     except Exception as e:
         print("❌ Error during schema initialization:")
+        print(e)
+
+def bootstrap_database():
+    try:
+        with psycopg.connect(db_url) as conn:
+            with conn.cursor() as cur:
+                ensure_schema(cur)
+
+                for table_name in data_table_insert_order:
+                    csv_path = os.path.join(csv_folder, f"{table_name}.csv")
+                    if not os.path.exists(csv_path):
+                        print(f"⚠️  CSV not found: {csv_path}")
+                        continue
+
+                    if table_exists(cur, table_name) and table_has_rows(cur, table_name):
+                        print(f"ℹ️  Skipping {table_name}; data already exists.")
+                        continue
+
+                    bulk_load_csv_to_table(cur, csv_path, table_name)
+
+            conn.commit()
+            print("✅ Database bootstrap completed successfully.")
+    except Exception as e:
+        print("❌ Error during database bootstrap:")
         print(e)
 
 def bulk_load_csv_to_table(cur, csv_path, table_name):
@@ -257,5 +302,4 @@ def main():
         print("✅ All tables inserted successfully.")
         
 if __name__ == "__main__":
-    init_schema()  # Initialize schema first
-    main()
+    bootstrap_database()
