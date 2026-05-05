@@ -39,7 +39,7 @@ def get_connection():
 # Landing page
 @app.get("/", response_class=HTMLResponse)
 def serve_form(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 # Check if the curl to backend is working
 @app.get("/ping")
